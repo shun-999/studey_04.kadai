@@ -16,20 +16,29 @@ class Order:
         self.item_order_list=[]
         self.item_order_name=[]
         self.item_order_price=[]
+        self.item_number = []
         self.item_master=item_master
     
-    def add_item_order(self,item_code):
+    def add_item_order(self,item_code, item_number):
         #self.item_order_list.append(item_code)
         for i in self.item_master:
             if item_code == i.item_code:
                 self.item_order_list.append(item_code)
                 self.item_order_name.append(i.item_name)
                 self.item_order_price.append(i.price)
+                self.item_number.append(item_number)
 
        
     def view_item_list(self):
-        for item,name,price  in zip(self.item_order_list, self.item_order_name, self.item_order_price):
+        sum_price = 0
+        sum_num = 0
+        for item,name,price,num  in zip(self.item_order_list, self.item_order_name, self.item_order_price, self.item_number):
             print("商品コード:{},商品名:{},価格:{}".format(item,name,price))
+            print("注文：{},{}個".format(name,num))
+            sum_price += price*num
+            sum_num += num
+        print("\n")
+        print("合計金額:{},合計個数:{}".format(sum_price,sum_num))
   
 def master_recog(file):
     item_master=[]
@@ -38,6 +47,18 @@ def master_recog(file):
         item_master.append(Item(str(item),name,price))
     return item_master
 
+def order_buy():
+    item_list = []
+    sum_number = []
+    while True:
+        x = input("商品コードを入力してください>>")
+        y = input("個数を入力してください>>")
+        if x == "":
+            break
+        else:
+            item_list.append(x)
+            sum_number.append(y)
+    return item_list, sum_number
 
 
 ### メイン処理
@@ -55,7 +76,9 @@ def main():
     #order.add_item_order("001")
     #order.add_item_order("002")
     #order.add_item_order("003")
-    order.add_item_order(input("商品コードを入力してください >>"))
+    item_list, sum_number= order_buy()
+    for item_code,item_number in zip(item_list,sum_number):
+        order.add_item_order(item_code, int(item_number))
     
     # オーダー表示
     order.view_item_list()
